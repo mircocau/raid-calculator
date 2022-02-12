@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="./assets/css/index.css">
+
+        <!-- Title -->
+        <title>RAID Calculator &middot; Mirco Cau</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/svg+xml" href="./assets/img/favicon.svg">
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="p-5 p-md-5 text-center">
+            <div class="container">
+                <h1 class="fw-bold"><i class="bi bi-device-hdd-fill"></i> RAID Calculator</h1>
+                <p>RAID stands for Redundant Array of Independent Disks. It is a method of combining several hard drives into one unit that offers fault tolerance and higher throughput levels than a single hard drive or group of independent hard drives. <a href="#div-about-RAID">Learn more</a></p>
+            </div>
+        </header>
+        <div class="container">
+            <!-- Input Drives Data -->
+            <div id="div-input-drives-data" class="">
+                <h4>Drives</h4>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="input-floating-drives-number" placeholder="0" value="0" onkeyup="_drives_listener_trigged()" onchange="_drives_listener_trigged()">
+                            <label for="input-floating-drives-number">Number of Drives</label>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="input-floating-drives-size" placeholder="0" value="0" onkeyup="_drives_listener_trigged()" onchange="_drives_listener_trigged()">
+                            <label for="input-floating-drives-size">Size of Each Drive</label>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-floating mb-3">
+                            <select class="form-select form-control" id="select-floating-drives-size-unit" onkeyup="_drives_listener_trigged()" onchange="_drives_listener_trigged()">
+                                <option value="GB">Gigabyte (GB)</option>
+                                <option value="TB" selected>Terabyte (TB)</option>
+                                <option value="GiB">Gibibyte (GiB)</option>
+                                <option value="TiB" >Tebibyte (TiB)</option>
+                            </select>
+                            <label for="select-floating-drives-size-unit">Drives Size Unit</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Select RAID -->
+            <div id="div-select-RAID">
+                <h4>RAID</h4>
+
+                <div class="row">
+                    <div class="col-sm mb-3">
+                        <button id="btn-RAID-0" value="0" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 0')" disabled><span class="text-uppercase">RAID 0</span><br><span>Stripe</span></button>
+                    </div>
+                    <div class="col-sm mb-3">
+                        <button id="btn-RAID-1" value="1" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 1')" disabled><span class="text-uppercase">RAID 1</span><br><span>2 drives</span></button>
+                    </div>
+                    <div class="col-sm mb-3">
+                        <button id="btn-RAID-5" value="5" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 5')" disabled><span class="text-uppercase">RAID 5</span><br><span>min 3 drives</span></button>
+                    </div>
+                    <div class="col-sm mb-3">
+                        <button id="btn-RAID-6" value="6" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 6')" disabled><span class="text-uppercase">RAID 6</span><br><span>min 4 drives</span></button>
+                    </div>
+                    <div class="col-sm mb-3">
+                        <button id="btn-RAID-10" value="10" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 10')" disabled><span class="text-uppercase">RAID 10</span><br><span>min 4 drives</span></button>
+                    </div>
+                    <div class="col-sm mb-3">
+                        <button id="btn-RAID-50" value="50" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 50')" disabled><span class="text-uppercase">RAID 50</span><br><span>min 6 drives</span></button>
+                    </div>
+                    <div class="col-sm mb3">
+                        <button id="btn-RAID-60" value="60" type="button" class="btn button-RAID form-control btn-outline-secondary" onclick="_raid_option_triggered('RAID 60')" disabled><span class="text-uppercase">RAID 60</span><br><span>min 8 drives</span></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Total Capacity -->
+            <div id="div-total-capacity" class="mt-5">
+                <div class="row">
+                    <div class="col mb-2">
+                        <div class="fw-bold">
+                            <span class="fs-1" id="span-total-usable-capacity-binary">0 TiB</span>
+                            
+                        </div>
+                        <div class="fw-bold">
+                            <span class="fs-5">(</span><span class="fs-5" id="span-total-usable-capacity-decimal">0 TB</span><span class="fs-5">)</span>
+                        </div>
+                        <span>Total Usable Capacity</span>
+                    </div>
+                    <div class="col mb-2 text-end text-muted">
+                        <div class="fw-bold">
+                            <span class="fs-1" id="span-total-raw-capacity-binary">0 TiB</span>
+                        </div>
+                        <div class="fw-bold">
+                            <span class="fs-5">(</span><span class="fs-5" id="span-total-raw-capacity-decimal">0 TB</span><span class="fs-5">)</span>
+                        </div>
+                        <span>Total Raw Capacity</span>
+                    </div>
+                </div>
+                <div id="div-progress-bar-total-capacity-container" class="progress">
+                    <div id="div-progress-bar-total-usable-capacity" class="progress-bar bg-dark" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <!-- Reset Button -->
+            <div id="div-reset" class="mt-5">
+                <div class="row text-center">
+                    <div class="col-sm">
+                        <button id="btn-reset" type="button" class="btn form-control btn-outline-warning" onclick="_reset()">RESET</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <hr class="divider">
+            
+            <!-- About RAID -->
+            <div id="div-about-RAID">
+                <h4>About RAID</h4>
+                <div class="accordion" id="accordion-RAID-information">
+                    <!-- RAID 0 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-0">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-0" aria-expanded="false" aria-controls="flush-collapse-RAID-0">
+                                RAID 0 &middot; Stripe
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-0" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-0" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-0.png" class="img-fluid" alt="RAID 0">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 0</strong> splits data across drives, resulting in higher data throughput. The performance of this configuration is extremely high, but a loss of any drive in the array will result in data loss. This level is commonly referred to as striping.</p>
+                                        <p>Minimum number of drives required: <strong>2</strong></p>
+                                        <p>Performance: <strong>High</strong></p>
+                                        <p>Redundancy: <strong>Low</strong></p>
+                                        <p>Efficiency: <strong>High</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>High performance</li>
+                                            <li>Easy to implement</li>
+                                            <li>Highly efficient (no parity overhead)</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>No redundancy</li>
+                                            <li>Limited business use cases due to no fault tolerance</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 1 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-1" aria-expanded="false" aria-controls="flush-collapse-RAID-1">
+                                RAID 1 &middot; Mirror
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-1" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-1" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-1.png" class="img-fluid" alt="RAID 1">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 1</strong> writes all data to two or more drives for 100% redundancy: if either drive fails, no data is lost. Compared to a single drive, this mode tends to be faster on reads, slower on writes. This is a good entry-level redundant configuration. However, since an entire drive is a duplicate, the cost per megabyte is high. This is commonly referred to as mirroring.</p>
+                                        <p>Minimum number of drives required: <strong>2</strong></p>
+                                        <p>Performance: <strong>Average</strong></p>
+                                        <p>Redundancy: <strong>High</strong></p>
+                                        <p>Efficiency: <strong>Low</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Fault tolerant</li>
+                                            <li>Easy to recover data in case of drive failure</li>
+                                            <li>Easy to implement</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Highly inefficient (100% parity overhead)</li>
+                                            <li>Not scalable (becomes very costly as number of disks increase)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 0+1 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-01">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-01" aria-expanded="false" aria-controls="flush-collapse-RAID-01">
+                                RAID 0+1 &middot; Stripe + Mirror
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-01" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-01" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-0+1.png" class="img-fluid" alt="RAID 0+1">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 0+1</strong> is a mirror (RAID 1) array whose segments are striped (RAID 0) arrays. This configuration combines the security of RAID 1 with an extra performance boost from the RAID 0 striping.</p>
+                                        <p>Minimum number of drives required: <strong>4</strong></p>
+                                        <p>Performance: <strong>Very High</strong></p>
+                                        <p>Redundancy: <strong>High</strong></p>
+                                        <p>Efficiency: <strong>Low</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Fault tolerance</li>
+                                            <li>Very high performance</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Expensive</li>
+                                            <li>High Overhead</li>
+                                            <li>Very limited scalability</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 5 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-5">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-5" aria-expanded="false" aria-controls="flush-collapse-RAID-5">
+                                RAID 5 &middot; Drives with Parity
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-5" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-5" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-5.png" class="img-fluid" alt="RAID 5">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 5</strong> stripes data at a block level across several drives, with parity equality distributed among the drives. The parity information allows recovery from the failure of any single drive. Write performance is rather quick, but because parity data must be skipped on each drive during reads, reads are slower. The low ratio of parity to data means low redundancy overhead.</p>
+                                        <p>Minimum number of drives required: <strong>3</strong></p>
+                                        <p>Performance: <strong>Average</strong></p>
+                                        <p>Redundancy: <strong>High</strong></p>
+                                        <p>Efficiency: <strong>High</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Fault tolerant</li>
+                                            <li>High efficiency</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Disk failure has a medium impact on throughput</li>
+                                            <li>Complex controller design</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 6 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-6">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-6" aria-expanded="false" aria-controls="flush-collapse-RAID-6">
+                                RAID 6 &middot; Drives with Double Parity
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-6" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-6" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-6.png" class="img-fluid" alt="RAID 6">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 6</strong> is an upgrade from 5: data is striped at a block level across several drives with double parity distributed among the drives. Parity information allows recovery from the failure of any single drive. The double parity gives this RAID mode additional redundancy at the cost of lower write performance (read performance is the same), and redundancy overhead remains low.</p>
+                                        <p>Minimum number of drives required: <strong>4</strong></p>
+                                        <p>Performance: <strong>Average</strong></p>
+                                        <p>Redundancy: <strong>High</strong></p>
+                                        <p>Efficiency: <strong>High</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Fault tolerant with increased redundancy</li>
+                                            <li>High efficiency</li>
+                                            <li>Remains a great option in multi-user environments that are not write performance sensitive</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Write performance penalty vs 5</li>
+                                            <li>More expensive than 5</li>
+                                            <li>Disk failure has a medium impact on throughput</li>
+                                            <li>Complex controller design</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 10 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-10">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-10" aria-expanded="false" aria-controls="flush-collapse-RAID-10">
+                                RAID 10 &middot; Mirror + Stripe
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-10" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-10" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-10.png" class="img-fluid" alt="RAID 10">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 10</strong> is a striped (RAID 0) array whose segments are mirrored (RAID 1). This mode is a popular configuration for environments where high performance and security are required. In terms of performance, it is similar to RAID 0+1. However, it has superior fault tolerance and rebuilds performance.</p>
+                                        <p>Minimum number of drives required: <strong>4</strong></p>
+                                        <p>Performance: <strong>Very High</strong></p>
+                                        <p>Redundancy: <strong>Very High</strong></p>
+                                        <p>Efficiency: <strong>Low</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Extremely high fault tolerance (under certain circumstances, RAID 10 array can sustain multiple simultaneous drive failures)</li>
+                                            <li>Very high performance</li>
+                                            <li>Faster rebuild performance than 0+1</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Very Expensive</li>
+                                            <li>High Overhead</li>
+                                            <li>Limited scalability</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 50 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-50">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-50" aria-expanded="false" aria-controls="flush-collapse-RAID-50">
+                                RAID 50 &middot; Parity + Stripe
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-50" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-50" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-50.png" class="img-fluid" alt="RAID 50">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 50</strong> combines parity of 5 and stripes it as in a 0 configuration. Although high in cost and complexity, performance and fault tolerance are superior to 5.</p>
+                                        <p>Minimum number of drives required: <strong>6</strong></p>
+                                        <p>Performance: <strong>High</strong></p>
+                                        <p>Redundancy: <strong>High</strong></p>
+                                        <p>Efficiency: <strong>Average</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Higher fault tolerance, better performance and higher efficiency than RAID 5</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Very Expensive</li>
+                                            <li>High Overhead</li>
+                                            <li>Limited scalability</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- RAID 60 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-heading-RAID-60">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-RAID-60" aria-expanded="false" aria-controls="flush-collapse-RAID-60">
+                                RAID 60 &middot; Double Parity + Stripe
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-RAID-60" class="accordion-collapse collapse" aria-labelledby="flush-heading-RAID-60" data-bs-parent="#accordion-RAID-information">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <img src="./assets/img/RAID-60.png" class="img-fluid" alt="RAID 60">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <p><strong>RAID 60</strong> combines double parity of 6 and stripes it as in a 0 configuration. Although high in cost and complexity, performance and fault tolerance are superior to 6.</p>
+                                        <p>Minimum number of drives required: <strong>8</strong></p>
+                                        <p>Performance: <strong>High</strong></p>
+                                        <p>Redundancy: <strong>High</strong></p>
+                                        <p>Efficiency: <strong>Average</strong></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p><strong>Advantages:</strong></p>
+                                        <ul>
+                                            <li>Higher fault tolerance than RAID 6</li>
+                                            <li>Higher performance than RAID 6</li>
+                                            <li>Higher efficiency than RAID 6</li>
+                                        </ul>
+                                        <p><strong>Disadvantages:</strong></p>
+                                        <ul>
+                                            <li>Very Expensive</li>
+                                            <li>Very complex / difficult to implement</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+
+        <!-- Footer -->
+        <footer class="p-5 p-md-5 mt-5 bg-light text-center">
+            <div class="container">
+                <p class="text-muted">&copy; 2021 <a href="https://www.mircocau.com" class="text-decoration-none text-muted" target="_blank">Mirco Cau</a></p>
+            </div>
+        </footer>
+
+        <!-- Required Javascript -->
+        <script type="text/javascript" src="./assets/js/index.js"></script>
+        <!-- Optional JavaScript -->
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    </body>
+</html>

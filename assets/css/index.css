@@ -1,0 +1,17 @@
+.divider {
+    margin: 4rem 0;
+}
+
+#div-progress-bar-total-capacity-container {
+  height: 40px;
+}
+
+@media (min-width: 576px) {
+  .button-RAID {
+    min-height: 7rem;
+  }
+}
+
+/*footer {
+  margin: 6rem 0 0 0;
+}*/
